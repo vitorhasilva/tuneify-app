@@ -13,16 +13,16 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
 
 const defaultRadios = [
-  { name: 'Antena 1', uri: 'http://radiotrucker.com/pt/play/182822/antena-1-portugal', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/29/Antena1_logo_2020.png' },
-  { name: 'Cidade FM', uri: 'http://radiotrucker.com/pt/play/182822/cidade-fm', logo: 'https://upload.wikimedia.org/wikipedia/pt/thumb/3/3b/CidadeFM_Logo.png/200px-CidadeFM_Logo.png' },
-  { name: 'Mega Hits', uri: 'http://radiotrucker.com/pt/play/182822/mega-hits-fm', logo: 'https://upload.wikimedia.org/wikipedia/pt/thumb/5/59/MegaHits.png/200px-MegaHits.png' },
-  { name: 'Smooth FM', uri: 'http://radiotrucker.com/pt/play/182822/smooth-fm', logo: 'https://cdn-radiotime-logos.tunein.com/s25093q.png' },
-  { name: 'RFM', uri: 'http://radiotrucker.com/pt/play/182822/radio-rfm', logo: 'https://upload.wikimedia.org/wikipedia/pt/thumb/7/7f/RFM_Logo.png/200px-RFM_Logo.png' },
-  { name: 'Antena 3', uri: 'http://radiotrucker.com/pt/play/182822/antena-3', logo: 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Antena_3_logo_2020.png' },
-  { name: 'Amor Portugal', uri: 'http://radiotrucker.com/pt/play/182822/amor-portugal', logo: 'https://via.placeholder.com/100x100?text=Amor+PT' },
-  { name: 'TSF', uri: 'http://radiotrucker.com/pt/play/182822/radio-tsf', logo: 'https://upload.wikimedia.org/wikipedia/pt/thumb/2/2e/TSF_logo.png/200px-TSF_logo.png' },
-  { name: 'Nova Era', uri: 'http://radiotrucker.com/pt/play/182822/nova-era', logo: 'https://via.placeholder.com/100x100?text=Nova+Era' },
-  { name: 'Smooth FM Jazz', uri: 'http://radiotrucker.com/pt/play/182822/smooth-fm-portugal', logo: 'https://cdn-radiotime-logos.tunein.com/s25093q.png' },
+  { name: 'Antena 1', uri: 'http://radiotrucker.com/pt/play/182822/antena-1-portugal', },
+  { name: 'Cidade FM', uri: 'http://radiotrucker.com/pt/play/182822/cidade-fm', logo: 'https://th.bing.com/th/id/R.e1547fa8225f0808a3db5f0b1ab9cb66?rik=MxvAaEIS9hwGkw&riu=http%3a%2f%2fstatic.radiosdeportugal.pt%2fimg%2fcidade.jpg&ehk=h0h%2fpzH9xYh62wzsvSPsO%2bfl7MKQm92HAp8K7hBn4zY%3d&risl=&pid=ImgRaw&r=0' },
+  { name: 'Mega Hits', uri: 'http://radiotrucker.com/pt/play/182822/mega-hits-fm', },
+  { name: 'Smooth FM', uri: 'http://radiotrucker.com/pt/play/182822/smooth-fm', },
+  { name: 'RFM', uri: 'http://radiotrucker.com/pt/play/182822/radio-rfm', },
+  { name: 'Antena 3', uri: 'http://radiotrucker.com/pt/play/182822/antena-3', },
+  { name: 'Amor Portugal', uri: 'http://radiotrucker.com/pt/play/182822/amor-portugal', },
+  { name: 'TSF', uri: 'http://radiotrucker.com/pt/play/182822/radio-tsf', },
+  { name: 'Nova Era', uri: 'http://radiotrucker.com/pt/play/182822/nova-era', },
+  { name: 'Smooth FM Jazz', uri: 'http://radiotrucker.com/pt/play/182822/smooth-fm-portugal', },
 ];
 
 export default function RadioList({ navigation }) {
@@ -82,7 +82,7 @@ export default function RadioList({ navigation }) {
               style={styles.item}
               onPress={() => {
                 setPlayingUri(radio.uri);
-                navigation.navigate('Rádio', { radio });
+                navigation.navigate('Reproduzir', { radio });
               }}
               onLongPress={() => handleLongPress(radio)}
             >

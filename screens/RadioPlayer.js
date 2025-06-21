@@ -1,34 +1,26 @@
-import React, { useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { useAudioPlayer } from 'expo-audio';
+// screens/RadioPlayer.js
+import React, { useEffect } from 'react';
+import { View, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { usePlayer } from '../context/PlayerContext';
 
 export default function RadioPlayer({ route, navigation }) {
-  const { radio } = route.params;
-  const player = useAudioPlayer({ uri: radio.uri });
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { radio: routeRadio } = route.params;
+  const { radio, isPlaying, play, toggle } = usePlayer();
 
-  React.useEffect(() => {
-    navigation.setOptions({ title: radio.name });
-  }, [radio.name]);
-
-  const togglePlayPause = async () => {
-    if (isPlaying) {
-      await player.pause();
-    } else {
-      await player.play();
-    }
-    setIsPlaying(!isPlaying);
-  };
+  useEffect(() => {
+    navigation.setOptions({ title: routeRadio.name });
+    if (routeRadio.uri !== radio?.uri) play(routeRadio);
+  }, [routeRadio]);
 
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: radio.logo || 'https://via.placeholder.com/300x300?text=Rádio' }}
+        source={{ uri: routeRadio.logo || `https://placehold.co/500x500.png?font=oswald&text=${encodeURIComponent(routeRadio.name)}` }}
         style={styles.logo}
       />
 
-      <TouchableOpacity onPress={togglePlayPause} style={styles.playButton}>
+      <TouchableOpacity onPress={toggle} style={styles.playButton}>
         <Ionicons name={isPlaying ? 'pause' : 'play'} size={48} color="white" />
       </TouchableOpacity>
     </View>
