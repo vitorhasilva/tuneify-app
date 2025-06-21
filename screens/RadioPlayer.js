@@ -1,23 +1,36 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { useAudioPlayer } from 'expo-audio';
 import { Ionicons } from '@expo/vector-icons';
 
-export default function RadioPlayer({ route }) {
+export default function RadioPlayer({ route, navigation }) {
   const { radio } = route.params;
   const player = useAudioPlayer({ uri: radio.uri });
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  React.useEffect(() => {
+    navigation.setOptions({ title: radio.name });
+  }, [radio.name]);
+
+  const togglePlayPause = async () => {
+    if (isPlaying) {
+      await player.pause();
+    } else {
+      await player.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.radioName}>{radio.name}</Text>
-      <View style={styles.controls}>
-        <Pressable onPress={() => player.play()} style={styles.button}>
-          <Ionicons name="play-circle" size={64} color="#4caf50" />
-        </Pressable>
-        <Pressable onPress={() => player.pause()} style={styles.button}>
-          <Ionicons name="pause-circle" size={64} color="#f44336" />
-        </Pressable>
-      </View>
+      <Image
+        source={{ uri: radio.logo || 'https://via.placeholder.com/300x300?text=Rádio' }}
+        style={styles.logo}
+      />
+
+      <TouchableOpacity onPress={togglePlayPause} style={styles.playButton}>
+        <Ionicons name={isPlaying ? 'pause' : 'play'} size={48} color="white" />
+      </TouchableOpacity>
     </View>
   );
 }
@@ -25,22 +38,23 @@ export default function RadioPlayer({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    backgroundColor: '#fff',
     alignItems: 'center',
-    backgroundColor: '#fefefe',
+    justifyContent: 'center',
     padding: 20,
   },
-  radioName: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    textAlign: 'center',
+  logo: {
+    width: 300,
+    height: 300,
+    borderRadius: 24,
+    marginBottom: 40,
+    backgroundColor: '#eee',
   },
-  controls: {
-    flexDirection: 'row',
-    gap: 30,
-  },
-  button: {
-    padding: 10,
+  playButton: {
+    backgroundColor: '#4caf50',
+    padding: 20,
+    borderRadius: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

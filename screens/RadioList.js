@@ -1,5 +1,4 @@
-// screens/RadioList.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,9 +9,10 @@ import {
   Image,
   ActivityIndicator,
 } from 'react-native';
-import { useAudioPlayer } from 'expo-audio';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
-const radios = [
+const defaultRadios = [
   { name: 'Antena 1', uri: 'http://radiotrucker.com/pt/play/182822/antena-1-portugal', logo: 'https://upload.wikimedia.org/wikipedia/commons/2/29/Antena1_logo_2020.png' },
   { name: 'Cidade FM', uri: 'http://radiotrucker.com/pt/play/182822/cidade-fm', logo: 'https://upload.wikimedia.org/wikipedia/pt/thumb/3/3b/CidadeFM_Logo.png/200px-CidadeFM_Logo.png' },
   { name: 'Mega Hits', uri: 'http://radiotrucker.com/pt/play/182822/mega-hits-fm', logo: 'https://upload.wikimedia.org/wikipedia/pt/thumb/5/59/MegaHits.png/200px-MegaHits.png' },
@@ -28,20 +28,50 @@ const radios = [
 export default function RadioList({ navigation }) {
   const [search, setSearch] = useState('');
   const [playingUri, setPlayingUri] = useState(null);
+  const [radios, setRadios] = useState(defaultRadios);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      AsyncStorage.getItem('customRadios').then((saved) => {
+        if (saved) {
+          setRadios([...defaultRadios, ...JSON.parse(saved)]);
+        }
+      });
+    }, [])
+  );
 
   const filteredRadios = radios.filter(radio =>
     radio.name.toLowerCase().includes(search.toLowerCase())
   );
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={() => navigation.navigate('Adicionar')} style={{ marginRight: 16 }}>
+          <Text style={{ fontSize: 16, color: '#4caf50' }}>➕</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation]);
+
+  const handleLongPress = (radio) => {
+    const isCustom = !defaultRadios.find(d => d.uri === radio.uri);
+    if (isCustom) {
+      navigation.navigate('Adicionar', { editRadio: radio });
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>📻 Rádios Portuguesas</Text>
+
       <TextInput
         style={styles.searchInput}
         placeholder="Procurar rádio..."
         value={search}
         onChangeText={setSearch}
       />
+
       <ScrollView contentContainerStyle={styles.list}>
         {filteredRadios.map((radio) => {
           const isPlaying = playingUri === radio.uri;
@@ -54,6 +84,7 @@ export default function RadioList({ navigation }) {
                 setPlayingUri(radio.uri);
                 navigation.navigate('Rádio', { radio });
               }}
+              onLongPress={() => handleLongPress(radio)}
             >
               <View style={styles.row}>
                 <Image source={{ uri: radio.logo }} style={styles.logo} />
