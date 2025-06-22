@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,9 +8,11 @@ import {
   ScrollView,
   Image,
   ActivityIndicator,
+  useColorScheme,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 
 const defaultRadios = [
   { name: 'All Stars Radio', uri: 'http://radiotrucker.com/pt/play/182822/all-stars-radio', logo: '' },
@@ -57,6 +59,9 @@ export default function RadioList({ navigation }) {
   const [search, setSearch] = useState('');
   const [playingUri, setPlayingUri] = useState(null);
   const [radios, setRadios] = useState(defaultRadios);
+  const [favorites, setFavorites] = useState([]);
+  const scheme = useColorScheme();
+  const styles = getStyles(scheme === 'dark');
 
   useFocusEffect(
     React.useCallback(() => {
@@ -65,12 +70,20 @@ export default function RadioList({ navigation }) {
           setRadios([...defaultRadios, ...JSON.parse(saved)]);
         }
       });
+      AsyncStorage.getItem('favoriteRadios').then((fav) => {
+        if (fav) setFavorites(JSON.parse(fav));
+      });
     }, [])
   );
 
   const filteredRadios = radios.filter(radio =>
     radio.name.toLowerCase().includes(search.toLowerCase())
-  );
+  ).sort((a, b) => {
+    const favA = favorites.includes(a.uri);
+    const favB = favorites.includes(b.uri);
+    if (favA === favB) return 0;
+    return favA ? -1 : 1;
+  });
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -87,6 +100,17 @@ export default function RadioList({ navigation }) {
     if (isCustom) {
       navigation.navigate('Adicionar', { editRadio: radio });
     }
+  };
+
+  const toggleFavorite = async (radio) => {
+    let favs = [...favorites];
+    if (favs.includes(radio.uri)) {
+      favs = favs.filter(u => u !== radio.uri);
+    } else {
+      favs.push(radio.uri);
+    }
+    setFavorites(favs);
+    await AsyncStorage.setItem('favoriteRadios', JSON.stringify(favs));
   };
 
   function stringToColor(str) {
@@ -128,7 +152,16 @@ export default function RadioList({ navigation }) {
               <View style={styles.row}>
                 <Image source={{ uri: radio.logo }} style={styles.logo} />
                 <Text style={styles.name}>{radio.name}</Text>
-                {isPlaying && <ActivityIndicator size="small" color="#4caf50" style={styles.loader} />}
+                <TouchableOpacity onPress={() => toggleFavorite(radio)}>
+                  <Ionicons
+                    name={favorites.includes(radio.uri) ? 'star' : 'star-outline'}
+                    size={24}
+                    color="#ffd700"
+                  />
+                </TouchableOpacity>
+                {isPlaying && (
+                  <ActivityIndicator size="small" color="#4caf50" style={styles.loader} />
+                )}
               </View>
             </TouchableOpacity>
           );
@@ -138,18 +171,18 @@ export default function RadioList({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff', padding: 16 },
+const getStyles = (dark) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: dark ? '#000' : '#fff', padding: 16 },
   header: { fontSize: 24, fontWeight: 'bold', textAlign: 'center', marginBottom: 10 },
   searchInput: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: dark ? '#222' : '#f0f0f0',
     padding: 10,
     borderRadius: 8,
     marginBottom: 16,
   },
   list: { gap: 12 },
   item: {
-    backgroundColor: '#eee',
+    backgroundColor: dark ? '#333' : '#eee',
     padding: 16,
     borderRadius: 10,
     marginBottom: 12,
@@ -163,7 +196,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: '#ccc',
+    backgroundColor: dark ? '#555' : '#ccc',
   },
   name: { fontSize: 18, flex: 1 },
   loader: { marginLeft: 10 },

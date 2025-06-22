@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  useColorScheme,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -14,6 +15,8 @@ export default function Adicionar({ navigation, route }) {
   const [name, setName] = useState(editRadio?.name || '');
   const [uri, setUri] = useState(editRadio?.uri || '');
   const [logo, setLogo] = useState(editRadio?.logo || '');
+  const scheme = useColorScheme();
+  const styles = getStyles(scheme === 'dark');
 
   useEffect(() => {
     if (editRadio) {
@@ -95,11 +98,11 @@ export default function Adicionar({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
+const getStyles = (dark) => StyleSheet.create({
+  container: { flex: 1, padding: 20, backgroundColor: dark ? '#000' : '#fff' },
   label: { fontSize: 16, fontWeight: '500', marginTop: 12 },
   input: {
-    backgroundColor: '#f4f4f4',
+    backgroundColor: dark ? '#222' : '#f4f4f4',
     padding: 10,
     borderRadius: 8,
     marginTop: 4,
@@ -121,3 +124,4 @@ const styles = StyleSheet.create({
   },
   deleteText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
 });
+
