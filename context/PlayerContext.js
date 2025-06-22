@@ -8,7 +8,7 @@ export function PlayerProvider({ children }) {
   const [radio, setRadio] = useState(null);
   const [requestedRadio, setRequestedRadio] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [volume, setVolumeState] = useState(1);
+  const [volume, setVolumeState] = useState(0.5);
   const timerRef = useRef(null);
 
   const player = useAudioPlayer(radio ? { uri: radio.uri } : null);
@@ -65,7 +65,7 @@ export function PlayerProvider({ children }) {
   const setVolume = (v) => {
     setVolumeState(v);
     try {
-      player.setVolume(v);
+      player.volume = v
     } catch (e) {
       console.warn('Erro ao ajustar volume:', e);
     }
