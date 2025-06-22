@@ -9,6 +9,8 @@ export function PlayerProvider({ children }) {
   const [requestedRadio, setRequestedRadio] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolumeState] = useState(0.5);
+  const [remainingTime, setRemainingTime] = useState(0);
+
   const timerRef = useRef(null);
 
   const player = useAudioPlayer(radio ? { uri: radio.uri } : null);
@@ -77,11 +79,22 @@ export function PlayerProvider({ children }) {
       timerRef.current = setTimeout(() => {
         pause();
       }, seconds * 1000);
+      setRemainingTime(seconds);
     }
   };
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRemainingTime((prev) => {
+        if (prev > 0) return prev - 1;
+        return 0;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <PlayerContext.Provider value={{ radio, isPlaying, play, pause, toggle, volume, setVolume, setSleepTimer }}>
+    <PlayerContext.Provider value={{ radio, isPlaying, play, pause, toggle, volume, setVolume, setSleepTimer, remainingTime }}>
       {children}
     </PlayerContext.Provider>
   );
