@@ -13,7 +13,7 @@ export default function App() {
     <PlayerProvider>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Início" component={RadioList} />
+          <Stack.Screen name="Início" component={RadioList} options={{ title: '📻 Rádios Portuguesas' }} />
           <Stack.Screen name="Reproduzir" component={RadioPlayer} />
           <Stack.Screen name="Adicionar" component={EditarAdicionarRadio} />
         </Stack.Navigator>

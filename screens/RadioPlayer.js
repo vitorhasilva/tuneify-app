@@ -13,10 +13,12 @@ export default function RadioPlayer({ route, navigation }) {
     if (routeRadio.uri !== radio?.uri) play(routeRadio);
   }, [routeRadio]);
 
+
+
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: routeRadio.logo || `https://placehold.co/500x500.png?font=oswald&text=${encodeURIComponent(routeRadio.name)}` }}
+        source={{ uri: routeRadio.logo }}
         style={styles.logo}
       />
 

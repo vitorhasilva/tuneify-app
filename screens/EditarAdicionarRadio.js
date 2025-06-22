@@ -27,7 +27,18 @@ export default function Adicionar({ navigation, route }) {
       return;
     }
 
-    const newlogo = !logo.trim() ? `https://placehold.co/500x500.png?font=oswald&text=${encodeURIComponent(name)}` : logo;
+    function stringToColor(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      }
+      const c = (hash & 0x00FFFFFF)
+        .toString(16)
+        .toUpperCase();
+      return "00000".substring(0, 6 - c.length) + c;
+    }
+
+    const newlogo = !logo.trim() ? `https://placehold.co/500x500/${stringToColor(name)}/FFF.png?font=oswald&text=${encodeURIComponent(name)}` : logo;
     const novaRadio = { name, uri, logo: newlogo };
 
     const saved = await AsyncStorage.getItem('customRadios');
